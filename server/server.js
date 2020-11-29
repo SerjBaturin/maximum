@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const PORT = 7000
+const mysql = require('mysql2')
 
 const fetch = require('node-fetch')
 const bodyParser = require('body-parser')
@@ -11,6 +12,17 @@ const url = "https://cleaner.dadata.ru/api/v1/clean/address";
 const token = "7a8be43c8bc10550ab00100b1e5654ccfcc3d252";
 const secret = "500f7e68c22878ae06df5df76e1fdf900e2e5176";
 
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  database: 'maximum',
+  password: 'root'
+});
+
+connection.connect((err) => {
+  err ? console.log(err) : console.log("Coonection is OK")
+})
+
 app.use(cors())
 // app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -18,8 +30,9 @@ app.use(bodyParser.json())
 
 app.post('/dadata', (req, res) => {
   
-  const query = req.body.input
-  console.log(query)
+  const dadataQuery = req.body.input
+
+  connection.query("INSERT INTO queries (query) VALUES ('" + dadataQuery + "')")
 
   const options = {
     method: "POST",
@@ -29,7 +42,7 @@ app.post('/dadata', (req, res) => {
         "Authorization": "Token " + token,
         "X-Secret": secret
     },
-    body: JSON.stringify([query])
+    body: JSON.stringify([dadataQuery])
   }
 
   fetch(url, options)
