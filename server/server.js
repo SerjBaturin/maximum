@@ -24,9 +24,31 @@ connection.connect((err) => {
 })
 
 app.use(cors())
-// app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+app.get('/dadata', (req, res) => {
+  connection.query("SELECT query FROM queries ORDER BY rand() LIMIT 1", (err, results, fields) => {
+    
+    const dadataQuery = JSON.stringify(results[0].query)
+
+    const options = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Token " + token,
+          "X-Secret": secret
+      },
+      body: JSON.stringify([dadataQuery])
+    }
+  
+    fetch(url, options)
+    .then(response => response.text())
+    .then(result => res.send(result))
+    .catch(error => console.log("error", error));
+  })
+
+})
 
 app.post('/dadata', (req, res) => {
   
