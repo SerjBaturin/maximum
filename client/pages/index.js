@@ -7,19 +7,19 @@ export default function Home() {
   useEffect(() => {
     axios.get('http://localhost:7000/dadata').then(
       d => {
-        setInput(d.data[0].source)
-        setOutput(d.data[0])
+          setInput(d.data[0].source)
+          setOutput(d.data[0])
       }
     ).catch(err => err)
   }, [])
 
   const [input, setInput] = useState('')
-  const [output, setOutput] = useState([])
+  const [output, setOutput] = useState({})
 
-  
   const inputHandler = (e) => {
     setInput(e.target.value)
   }
+
   const submitHandler = (e) => {
     e.preventDefault()
     axios({
@@ -38,10 +38,11 @@ export default function Home() {
           <input type='text' value={input} placeholder='введите адрес' onChange={inputHandler} required />
           <input type='submit' value='ИСКАТЬ' />
         </form>
-        <ul>
-          {Object.keys(output).map((outputParam, outputId) => (
-            <li key={outputId}>
-              {`${outputParam} ${output[outputParam]}`}
+        <ul className={styles.list}>
+          {Object.keys(output).map((outputParam) => (
+            <li key={outputParam}>
+              <span className={styles.list__param}>{outputParam}:</span>
+              <span className={styles.list__param__value}>{output[outputParam]}</span>
             </li>
           ))}
         </ul>
