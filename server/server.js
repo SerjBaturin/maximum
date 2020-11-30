@@ -27,15 +27,17 @@ app.use(cors())
 app.use(bodyParser.json())
 
 app.get('/dadata', (req, res) => {
-  connection.query("SELECT query FROM queries ORDER BY rand() LIMIT 1", (err, results, fields) => {
-    const dadata = ''
-    if (results[0] === null || undefined || '' || {}) {
+  connection.query("SELECT query FROM queries ORDER BY rand() LIMIT 1", (err, results) => {
+    let dadataQuery = ''
+    if(err) {
+      console.log(err)
+    }
+    if (results[0] === null || results[0] === undefined || results[0] === '' || results[0] === {}) {
       dadataQuery = "москва"
     } else {
       dadataQuery = JSON.stringify(results[0].query)
     }
 
-    
     const options = {
       method: "POST",
       mode: "cors",
